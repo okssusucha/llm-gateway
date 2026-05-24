@@ -1,0 +1,21 @@
+services:
+  gateway:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      GATEWAY_API_KEYS: ${GATEWAY_API_KEYS:-demo-key}
+      GATEWAY_DEFAULT_PROVIDER: ${GATEWAY_DEFAULT_PROVIDER:-echo}
+      # Provider keys are optional; without them the gateway runs on the echo provider.
+      GATEWAY_OPENAI_API_KEY: ${GATEWAY_OPENAI_API_KEY:-}
+      GATEWAY_ANTHROPIC_API_KEY: ${GATEWAY_ANTHROPIC_API_KEY:-}
+      GATEWAY_REDIS_URL: ${GATEWAY_REDIS_URL:-redis://redis:6379/0}
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
